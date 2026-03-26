@@ -2,8 +2,8 @@
   <div class="min-h-screen bg-gray-50 flex items-center justify-center p-4">
     <div class="w-full max-w-lg">
       <div class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">欢迎使用 Life Recorder</h1>
-        <p class="text-gray-500 mt-2">请先设置您的基本信息，开始记录人生旅程</p>
+        <h1 class="text-3xl font-bold text-gray-900">欢迎使用飞光</h1>
+        <p class="text-gray-500 mt-2">人生如逆旅&ensp;我亦是行人</p>
       </div>
       <UCard class="shadow-lg">
         <form @submit.prevent="handleSetup" class="space-y-6">

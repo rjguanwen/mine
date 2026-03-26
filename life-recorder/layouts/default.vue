@@ -2,12 +2,13 @@
   <div class="min-h-screen bg-gray-50 flex">
     <!-- Sidebar -->
     <aside
-      class="w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full z-30 transition-transform duration-300"
+      class="w-64 bg-white border-r border-gray-200 flex flex-col fixed left-0 top-0 h-full z-30 transition-transform duration-300"
       :class="{ '-translate-x-full': !sidebarOpen, 'translate-x-0': sidebarOpen }"
     >
       <!-- Logo -->
-      <div class="h-16 flex items-center px-6 border-b border-gray-100">
-        <h1 class="text-lg font-bold text-gray-900">Life Recorder</h1>
+      <div class="h-16 flex flex-col justify-center px-6 border-b border-gray-100">
+        <h1 class="text-lg font-bold text-gray-900">飞光</h1>
+        <p class="text-xs text-gray-400 -mt-0.5">人生如逆旅&ensp;我亦是行人</p>
       </div>
 
       <!-- Navigation -->

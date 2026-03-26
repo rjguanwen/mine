@@ -1,27 +1,9 @@
 <template>
   <div class="life-calendar">
     <!-- Controls -->
-    <div class="flex items-center justify-between mb-4">
-      <div class="flex items-center gap-2">
-        <UButtonGroup>
-          <UButton
-            :variant="view === 'week' ? 'solid' : 'outline'"
-            size="sm"
-            @click="view = 'week'"
-          >
-            周视图
-          </UButton>
-          <UButton
-            :variant="view === 'month' ? 'solid' : 'outline'"
-            size="sm"
-            @click="view = 'month'"
-          >
-            月视图
-          </UButton>
-        </UButtonGroup>
-      </div>
+    <div class="flex items-center justify-end mb-4">
       <div class="text-sm text-gray-500">
-        每{{ view === 'week' ? '格=1周' : '格=1月' }}，每行=1年
+        每格=1周，每行=1年
       </div>
     </div>
 
@@ -93,7 +75,7 @@
           <div v-if="selectedCellData.milestones.length">
             <h3 class="text-sm font-medium text-gray-500 mb-2">大事记</h3>
             <div v-for="m in selectedCellData.milestones" :key="m.id" class="p-2 bg-amber-50 rounded mb-1">
-              <NuxtLink :to="`/milestones/${m.id}`" class="text-sm font-medium text-amber-800 hover:underline">
+              <NuxtLink to="/milestones" class="text-sm font-medium text-amber-800 hover:underline">
                 {{ m.title }}
               </NuxtLink>
               <span class="text-xs text-amber-600 ml-2">{{ m.category }}</span>
@@ -114,7 +96,7 @@
           <div v-if="selectedCellData.plans.length">
             <h3 class="text-sm font-medium text-gray-500 mb-2">规划</h3>
             <div v-for="p in selectedCellData.plans" :key="p.id" class="p-2 bg-purple-50 rounded mb-1">
-              <NuxtLink :to="`/plans/${p.id}`" class="text-sm font-medium text-purple-800 hover:underline">
+              <NuxtLink to="/plans" class="text-sm font-medium text-purple-800 hover:underline">
                 {{ p.title }}
               </NuxtLink>
               <span class="text-xs text-purple-600 ml-2">{{ p.status }}</span>
@@ -149,7 +131,7 @@ const props = defineProps<{
   compact?: boolean
 }>()
 
-const { view, generateGrid } = useLifeCalendar()
+const { generateGrid } = useLifeCalendar()
 
 const grid = computed(() => generateGrid(props.birthDate, props.lifespan))
 const hoveredCell = ref<CalendarPeriod | null>(null)
@@ -157,13 +139,12 @@ const selectedCell = ref<CalendarPeriod | null>(null)
 const showDetail = ref(false)
 const gridContainer = ref<HTMLElement>()
 
-const cols = computed(() => view.value === 'week' ? 52 : 12)
-const cellSize = computed(() => props.compact ? (view.value === 'week' ? 6 : 14) : (view.value === 'week' ? 10 : 22))
+const cellSize = computed(() => props.compact ? 6 : 10)
 const gap = computed(() => props.compact ? 1 : 2)
 
 const gridStyle = computed(() => ({
   display: 'grid',
-  gridTemplateColumns: `repeat(${cols.value}, ${cellSize.value}px)`,
+  gridTemplateColumns: `repeat(52, ${cellSize.value}px)`,
   gap: `${gap.value}px`,
 }))
 
