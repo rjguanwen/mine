@@ -74,11 +74,31 @@
 
           <div v-if="selectedCellData.milestones.length">
             <h3 class="text-sm font-medium text-gray-500 mb-2">大事记</h3>
-            <div v-for="m in selectedCellData.milestones" :key="m.id" class="p-2 bg-amber-50 rounded mb-1">
-              <NuxtLink to="/milestones" class="text-sm font-medium text-amber-800 hover:underline">
-                {{ m.title }}
-              </NuxtLink>
-              <span class="text-xs text-amber-600 ml-2">{{ m.category }}</span>
+            <div v-for="m in selectedCellData.milestones" :key="m.id" class="p-3 bg-amber-50 rounded-lg mb-2">
+              <div class="flex items-center justify-between mb-1">
+                <NuxtLink to="/milestones" class="text-sm font-medium text-amber-800 hover:underline">
+                  {{ m.title }}
+                </NuxtLink>
+                <span class="text-xs text-amber-600">{{ m.category }}</span>
+              </div>
+              <p class="text-xs text-gray-500 mb-1">{{ m.eventDate }}</p>
+              <div v-if="m.description" class="text-sm text-gray-700 prose prose-sm mt-1" v-html="m.description" />
+              <div v-if="m.media?.length" class="mt-2 space-y-2">
+                <template v-for="med in m.media" :key="med.id">
+                  <img
+                    v-if="med.mimeType?.startsWith('image/')"
+                    :src="med.url"
+                    :alt="med.fileName"
+                    class="w-full rounded object-cover max-h-60"
+                  />
+                  <video
+                    v-else-if="med.mimeType?.startsWith('video/')"
+                    :src="med.url"
+                    controls
+                    class="w-full rounded max-h-60"
+                  />
+                </template>
+              </div>
             </div>
           </div>
 
@@ -125,7 +145,7 @@ const props = defineProps<{
   lifespan: number
   summaryData?: {
     records: Array<{ recordDate: string; count: number }>
-    milestones: Array<{ id: number; title: string; category: string; eventDate: string; importance: number }>
+    milestones: Array<{ id: number; title: string; description?: string; category: string; eventDate: string; importance: number; media?: Array<{ id: number; url: string; mimeType: string; fileName: string }> }>
     plans: Array<{ id: number; title: string; targetDate: string | null; startDate: string | null; status: string }>
   }
   compact?: boolean

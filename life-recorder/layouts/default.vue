@@ -56,7 +56,7 @@
     <!-- Main content -->
     <div class="flex-1 lg:ml-64">
       <!-- Top header -->
-      <header class="h-16 bg-white border-b border-gray-200 flex items-center px-6 sticky top-0 z-10">
+      <header class="h-16 bg-white border-b border-gray-200 flex items-center px-6 fixed top-0 right-0 left-0 lg:left-64 z-10">
         <button
           @click="sidebarOpen = !sidebarOpen"
           class="lg:hidden mr-4"
@@ -74,7 +74,7 @@
       </header>
 
       <!-- Page content -->
-      <main class="p-6">
+      <main class="px-6 pt-3 pb-6 mt-16">
         <slot />
       </main>
     </div>

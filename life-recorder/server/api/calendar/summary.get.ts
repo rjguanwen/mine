@@ -1,5 +1,5 @@
 import { eq, and, gte, lte, sql } from 'drizzle-orm'
-import { users, records, milestones, plans, ideas } from '../../database/schema'
+import { users, records, milestones, plans, ideas, media } from '../../database/schema'
 import { useDb } from '../../database'
 import { getUserIdFromEvent } from '../../utils/auth'
 
@@ -27,6 +27,7 @@ export default defineEventHandler(async (event) => {
   const allMilestones = db.select({
     id: milestones.id,
     title: milestones.title,
+    description: milestones.description,
     category: milestones.category,
     eventDate: milestones.eventDate,
     importance: milestones.importance,
@@ -34,6 +35,37 @@ export default defineEventHandler(async (event) => {
     .from(milestones)
     .where(eq(milestones.userId, userId))
     .all()
+
+  // Get media for milestones
+  const milestoneIds = allMilestones.map(m => m.id)
+  const milestoneMedia = milestoneIds.length
+    ? db.select({
+        id: media.id,
+        entityId: media.entityId,
+        filePath: media.filePath,
+        fileName: media.fileName,
+        mimeType: media.mimeType,
+      })
+        .from(media)
+        .where(and(
+          eq(media.userId, userId),
+          eq(media.entityType, 'milestone'),
+        ))
+        .all()
+    : []
+
+  // Attach media to milestones
+  const milestonesWithMedia = allMilestones.map(m => ({
+    ...m,
+    media: milestoneMedia
+      .filter(med => med.entityId === m.id)
+      .map(med => ({
+        id: med.id,
+        url: `/uploads/${med.filePath}`,
+        mimeType: med.mimeType,
+        fileName: med.fileName,
+      })),
+  }))
 
   // Get all plans
   const allPlans = db.select({
@@ -60,7 +92,7 @@ export default defineEventHandler(async (event) => {
     birthDate: user.birthDate,
     expectedLifespan: user.expectedLifespan,
     records: allRecords,
-    milestones: allMilestones,
+    milestones: milestonesWithMedia,
     plans: allPlans,
     ideas: allIdeas,
   }
