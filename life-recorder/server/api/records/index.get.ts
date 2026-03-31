@@ -46,7 +46,7 @@ export default defineEventHandler(async (event) => {
     return {
       ...record,
       tags: recordTagList,
-      media: recordMedia.map(m => ({ ...m, url: `/uploads/${m.filePath}` })),
+      media: recordMedia.map(m => ({ ...m, url: `/api/uploads/${m.filePath}` })),
     }
   })
 

@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
     return {
       ...idea,
       tags: tagList,
-      media: ideaMedia.map(m => ({ ...m, url: `/uploads/${m.filePath}` })),
+      media: ideaMedia.map(m => ({ ...m, url: `/api/uploads/${m.filePath}` })),
     }
   })
 

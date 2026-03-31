@@ -61,7 +61,7 @@ export default defineEventHandler(async (event) => {
       .filter(med => med.entityId === m.id)
       .map(med => ({
         id: med.id,
-        url: `/uploads/${med.filePath}`,
+        url: `/api/uploads/${med.filePath}`,
         mimeType: med.mimeType,
         fileName: med.fileName,
       })),

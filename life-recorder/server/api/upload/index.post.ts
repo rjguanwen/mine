@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
 
   return {
     id: result.id,
-    url: `/uploads/${relativePath}`,
+    url: `/api/uploads/${relativePath}`,
     fileName: result.fileName,
     mimeType: result.mimeType,
     fileSize: result.fileSize,

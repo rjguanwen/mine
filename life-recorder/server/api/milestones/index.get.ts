@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
     return {
       ...milestone,
       tags: tagList,
-      media: milestoneMedia.map(m => ({ ...m, url: `/uploads/${m.filePath}` })),
+      media: milestoneMedia.map(m => ({ ...m, url: `/api/uploads/${m.filePath}` })),
     }
   })
 

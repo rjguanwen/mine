@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@nuxt/icon": "^1.15.0",
+    "@nuxt/kit": "^4.4.2",
     "@nuxt/ui": "^2.22.3",
     "@pinia/nuxt": "^0.11.3",
     "@tiptap/extension-image": "^3.20.5",
