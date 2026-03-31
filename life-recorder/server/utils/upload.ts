@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync } from 'fs'
-import { join, extname } from 'path'
+import { join, extname, resolve } from 'path'
 import { randomUUID } from 'crypto'
 
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp']
@@ -28,7 +28,7 @@ export function validateFile(mimeType: string, size: number): { valid: boolean; 
 
 export function getUploadPath(mimeType: string): { dir: string; subDir: string } {
   const config = useRuntimeConfig()
-  const baseDir = config.uploadDir as string
+  const baseDir = resolve(process.cwd(), config.uploadDir as string)
   const subDir = ALLOWED_IMAGE_TYPES.includes(mimeType) ? 'images' : 'videos'
   const dir = join(baseDir, subDir)
 
