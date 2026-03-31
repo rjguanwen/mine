@@ -31,12 +31,5 @@ export default defineNuxtConfig({
         target: 'esnext',
       },
     },
-    publicAssets: [
-      {
-        dir: '../uploads',
-        baseURL: '/uploads',
-        maxAge: 60 * 60 * 24 * 30,
-      },
-    ],
   },
 })
