@@ -30,7 +30,7 @@
           :class="categoryColor(milestone.category)" />
         <UCard class="hover:shadow-md transition-shadow">
           <div class="flex items-start justify-between">
-            <div class="flex-1">
+            <div class="flex-1 cursor-pointer" @click="viewMilestone(milestone)">
               <div class="flex items-center gap-2 mb-2">
                 <span class="text-sm text-gray-500">{{ milestone.eventDate }}</span>
                 <span class="px-2 py-0.5 text-xs rounded-full"
@@ -97,6 +97,19 @@
         </div>
       </UCard>
     </UModal>
+
+    <!-- Detail Slideover -->
+    <USlideover v-model="showDetail" :ui="{ width: 'max-w-md' }">
+      <UCard>
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold">大事记详情</h3>
+            <UButton icon="i-heroicons-x-mark" variant="ghost" size="sm" @click="showDetail = false" />
+          </div>
+        </template>
+        <DetailMilestoneDetail v-if="selectedItem" :item="selectedItem" />
+      </UCard>
+    </USlideover>
   </div>
 </template>
 
@@ -106,17 +119,10 @@ const showForm = ref(false)
 const saving = ref(false)
 const editingId = ref<number | null>(null)
 const selectedCategory = ref('')
+const selectedItem = ref<any>(null)
+const showDetail = ref(false)
 
-const categories = [
-  { value: 'education', label: '教育' },
-  { value: 'career', label: '事业' },
-  { value: 'relationship', label: '情感' },
-  { value: 'travel', label: '旅行' },
-  { value: 'achievement', label: '成就' },
-  { value: 'health', label: '健康' },
-  { value: 'family', label: '家庭' },
-  { value: 'other', label: '其他' },
-]
+const { categories, categoryColor, categoryBadge, categoryLabel } = useMilestoneHelpers()
 
 const form = reactive({
   title: '',
@@ -135,27 +141,9 @@ const filteredItems = computed(() => {
   return items.filter(m => m.category === selectedCategory.value)
 })
 
-function categoryColor(cat: string) {
-  const map: Record<string, string> = {
-    education: 'bg-blue-500', career: 'bg-green-500', relationship: 'bg-pink-500',
-    travel: 'bg-cyan-500', achievement: 'bg-amber-500', health: 'bg-red-500',
-    family: 'bg-purple-500', other: 'bg-gray-500',
-  }
-  return map[cat] || 'bg-gray-500'
-}
-
-function categoryBadge(cat: string) {
-  const map: Record<string, string> = {
-    education: 'bg-blue-100 text-blue-700', career: 'bg-green-100 text-green-700',
-    relationship: 'bg-pink-100 text-pink-700', travel: 'bg-cyan-100 text-cyan-700',
-    achievement: 'bg-amber-100 text-amber-700', health: 'bg-red-100 text-red-700',
-    family: 'bg-purple-100 text-purple-700', other: 'bg-gray-100 text-gray-700',
-  }
-  return map[cat] || 'bg-gray-100 text-gray-700'
-}
-
-function categoryLabel(cat: string) {
-  return categories.find(c => c.value === cat)?.label || cat
+function viewMilestone(milestone: any) {
+  selectedItem.value = milestone
+  showDetail.value = true
 }
 
 function editMilestone(m: any) {

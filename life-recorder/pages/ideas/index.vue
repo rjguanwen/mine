@@ -17,45 +17,50 @@
       >
         <div class="space-y-2">
           <div class="flex items-start justify-between">
-            <h3 v-if="idea.title" class="font-medium text-gray-900">{{ idea.title }}</h3>
-            <div class="flex gap-1">
+            <div class="flex-1 cursor-pointer" @click="viewIdea(idea)">
+              <h3 v-if="idea.title" class="font-medium text-gray-900">{{ idea.title }}</h3>
+            </div>
+            <div class="flex gap-1" @click.stop>
               <UButton variant="ghost" size="xs" icon="i-heroicons-pencil" @click="editIdea(idea)" />
               <UButton variant="ghost" size="xs" icon="i-heroicons-trash" color="red" @click="deleteIdea(idea.id)" />
             </div>
           </div>
 
-          <div v-if="idea.content" class="text-sm text-gray-600 prose prose-sm" v-html="idea.content" />
+          <div class="cursor-pointer" @click="viewIdea(idea)">
+            <div v-if="idea.content" class="text-sm text-gray-600 prose prose-sm" v-html="idea.content" />
 
-          <!-- Media -->
-          <div v-if="idea.media?.length" class="flex gap-2 flex-wrap">
-            <template v-for="m in idea.media" :key="m.id">
-              <img
-                v-if="m.mimeType?.startsWith('image/')"
-                :src="m.url"
-                class="w-full rounded object-cover max-h-48"
-              />
-              <video
-                v-else-if="m.mimeType?.startsWith('video/')"
-                :src="m.url"
-                controls
-                class="w-full rounded max-h-48"
-              />
-            </template>
-          </div>
+            <!-- Media -->
+            <div v-if="idea.media?.length" class="flex gap-2 flex-wrap mt-2">
+              <template v-for="m in idea.media" :key="m.id">
+                <img
+                  v-if="m.mimeType?.startsWith('image/')"
+                  :src="m.url"
+                  class="w-full rounded object-cover max-h-48"
+                />
+                <video
+                  v-else-if="m.mimeType?.startsWith('video/')"
+                  :src="m.url"
+                  controls
+                  class="w-full rounded max-h-48"
+                  @click.stop
+                />
+              </template>
+            </div>
 
-          <!-- Tags -->
-          <div v-if="idea.tags?.length" class="flex gap-1 flex-wrap">
-            <span v-for="tag in idea.tags" :key="tag.id"
-              class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
-              {{ tag.name }}
-            </span>
-          </div>
+            <!-- Tags -->
+            <div v-if="idea.tags?.length" class="flex gap-1 flex-wrap mt-2">
+              <span v-for="tag in idea.tags" :key="tag.id"
+                class="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-600">
+                {{ tag.name }}
+              </span>
+            </div>
 
-          <div class="flex items-center justify-between text-xs text-gray-400 pt-1">
-            <span>{{ idea.createdAt?.slice(0, 10) }}</span>
-            <span v-if="idea.linkedPlanId" class="text-purple-500">
-              <UIcon name="i-heroicons-link" class="w-3 h-3 inline" /> 已关联规划
-            </span>
+            <div class="flex items-center justify-between text-xs text-gray-400 pt-1">
+              <span>{{ idea.createdAt?.slice(0, 10) }}</span>
+              <span v-if="idea.linkedPlanId" class="text-purple-500">
+                <UIcon name="i-heroicons-link" class="w-3 h-3 inline" /> 已关联规划
+              </span>
+            </div>
           </div>
         </div>
       </UCard>
@@ -89,6 +94,19 @@
         </div>
       </UCard>
     </UModal>
+
+    <!-- Detail Slideover -->
+    <USlideover v-model="showDetail" :ui="{ width: 'max-w-md' }">
+      <UCard>
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold">灵感详情</h3>
+            <UButton icon="i-heroicons-x-mark" variant="ghost" size="sm" @click="showDetail = false" />
+          </div>
+        </template>
+        <DetailIdeaDetail v-if="selectedItem" :item="selectedItem" />
+      </UCard>
+    </USlideover>
   </div>
 </template>
 
@@ -97,6 +115,8 @@ const toast = useToast()
 const showForm = ref(false)
 const saving = ref(false)
 const editingId = ref<number | null>(null)
+const selectedItem = ref<any>(null)
+const showDetail = ref(false)
 
 const form = reactive({
   title: '',
@@ -105,6 +125,11 @@ const form = reactive({
 })
 
 const { data, refresh } = await useFetch<{ items: any[] }>('/api/ideas')
+
+function viewIdea(idea: any) {
+  selectedItem.value = idea
+  showDetail.value = true
+}
 
 function editIdea(idea: any) {
   editingId.value = idea.id

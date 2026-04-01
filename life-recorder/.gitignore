@@ -29,3 +29,5 @@ data/
 # Uploads
 uploads/
 !server/api/uploads/
+
+nul

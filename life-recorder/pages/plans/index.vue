@@ -11,7 +11,7 @@
     <!-- Kanban Board -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div
-        v-for="column in columns"
+        v-for="column in statusColumns"
         :key="column.status"
         class="bg-gray-50 rounded-xl p-4"
       >
@@ -30,6 +30,7 @@
             v-for="plan in getColumnPlans(column.status)"
             :key="plan.id"
             class="cursor-pointer hover:shadow-md transition-shadow"
+            @click="viewPlan(plan)"
           >
             <div class="space-y-2">
               <div class="flex items-center justify-between">
@@ -37,9 +38,11 @@
                   :class="priorityBadge(plan.priority)">
                   {{ priorityLabel(plan.priority) }}
                 </span>
-                <UDropdown :items="getPlanActions(plan)" :popper="{ placement: 'bottom-end' }">
-                  <UButton variant="ghost" size="xs" icon="i-heroicons-ellipsis-horizontal" />
-                </UDropdown>
+                <div @click.stop>
+                  <UDropdown :items="getPlanActions(plan)" :popper="{ placement: 'bottom-end' }">
+                    <UButton variant="ghost" size="xs" icon="i-heroicons-ellipsis-horizontal" />
+                  </UDropdown>
+                </div>
               </div>
               <h4 class="font-medium text-gray-900 text-sm">{{ plan.title }}</h4>
               <div v-if="plan.description" class="text-xs text-gray-500 line-clamp-2" v-html="plan.description" />
@@ -91,6 +94,19 @@
         </div>
       </UCard>
     </UModal>
+
+    <!-- Detail Slideover -->
+    <USlideover v-model="showDetail" :ui="{ width: 'max-w-md' }">
+      <UCard>
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold">规划详情</h3>
+            <UButton icon="i-heroicons-x-mark" variant="ghost" size="sm" @click="showDetail = false" />
+          </div>
+        </template>
+        <DetailPlanDetail v-if="selectedItem" :item="selectedItem" />
+      </UCard>
+    </USlideover>
   </div>
 </template>
 
@@ -99,27 +115,10 @@ const toast = useToast()
 const showForm = ref(false)
 const saving = ref(false)
 const editingId = ref<number | null>(null)
+const selectedItem = ref<any>(null)
+const showDetail = ref(false)
 
-const columns = [
-  { status: 'not_started', label: '未开始', color: 'bg-gray-400' },
-  { status: 'in_progress', label: '进行中', color: 'bg-blue-500' },
-  { status: 'completed', label: '已完成', color: 'bg-green-500' },
-  { status: 'abandoned', label: '已放弃', color: 'bg-red-400' },
-]
-
-const priorities = [
-  { value: 'low', label: '低' },
-  { value: 'medium', label: '中' },
-  { value: 'high', label: '高' },
-  { value: 'urgent', label: '紧急' },
-]
-
-const statusOptions = [
-  { value: 'not_started', label: '未开始' },
-  { value: 'in_progress', label: '进行中' },
-  { value: 'completed', label: '已完成' },
-  { value: 'abandoned', label: '已放弃' },
-]
+const { priorities, statusColumns, statusOptions, priorityBadge, priorityLabel } = usePlanHelpers()
 
 const form = reactive({
   title: '',
@@ -136,22 +135,15 @@ function getColumnPlans(status: string) {
   return (data.value?.items || []).filter(p => p.status === status)
 }
 
-function priorityBadge(p: string) {
-  const map: Record<string, string> = {
-    low: 'bg-gray-100 text-gray-600', medium: 'bg-blue-100 text-blue-600',
-    high: 'bg-orange-100 text-orange-600', urgent: 'bg-red-100 text-red-600',
-  }
-  return map[p] || 'bg-gray-100 text-gray-600'
-}
-
-function priorityLabel(p: string) {
-  return priorities.find(x => x.value === p)?.label || p
+function viewPlan(plan: any) {
+  selectedItem.value = plan
+  showDetail.value = true
 }
 
 function getPlanActions(plan: any) {
   return [[
     { label: '编辑', icon: 'i-heroicons-pencil', click: () => editPlan(plan) },
-    ...columns.filter(c => c.status !== plan.status).map(c => ({
+    ...statusColumns.filter(c => c.status !== plan.status).map(c => ({
       label: `移至${c.label}`,
       click: () => updateStatus(plan.id, c.status),
     })),

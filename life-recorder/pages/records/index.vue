@@ -12,7 +12,7 @@
     <div v-if="data?.items?.length" class="space-y-4">
       <UCard v-for="record in data.items" :key="record.id" class="hover:shadow-md transition-shadow">
         <div class="flex items-start justify-between">
-          <div class="flex-1">
+          <div class="flex-1 cursor-pointer" @click="viewRecord(record)">
             <div class="flex items-center gap-2 mb-2">
               <span class="text-sm text-gray-500">{{ record.recordDate }}</span>
               <span v-if="record.mood" class="text-sm">{{ moodEmoji(record.mood) }}</span>
@@ -78,6 +78,19 @@
         </div>
       </UCard>
     </UModal>
+
+    <!-- Detail Slideover -->
+    <USlideover v-model="showDetail" :ui="{ width: 'max-w-md' }">
+      <UCard>
+        <template #header>
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold">日记详情</h3>
+            <UButton icon="i-heroicons-x-mark" variant="ghost" size="sm" @click="showDetail = false" />
+          </div>
+        </template>
+        <DetailRecordDetail v-if="selectedItem" :item="selectedItem" />
+      </UCard>
+    </USlideover>
   </div>
 </template>
 
@@ -86,6 +99,10 @@ const toast = useToast()
 const showForm = ref(false)
 const saving = ref(false)
 const editingId = ref<number | null>(null)
+const selectedItem = ref<any>(null)
+const showDetail = ref(false)
+
+const { moodEmoji } = useMoodMap()
 
 const form = reactive({
   title: '',
@@ -98,11 +115,10 @@ const form = reactive({
 
 const { data, refresh } = await useFetch<{ items: any[] }>('/api/records')
 
-const moodMap: Record<string, string> = {
-  happy: '😊', excited: '🤩', grateful: '🙏', neutral: '😐',
-  tired: '😴', anxious: '😰', sad: '😢', angry: '😤',
+function viewRecord(record: any) {
+  selectedItem.value = record
+  showDetail.value = true
 }
-function moodEmoji(mood: string) { return moodMap[mood] || mood }
 
 function editRecord(record: any) {
   editingId.value = record.id
