@@ -97,7 +97,7 @@
 
     <!-- Detail Slideover -->
     <USlideover v-model="showDetail" :ui="{ width: 'max-w-md' }">
-      <UCard>
+      <UCard :ui="{ body: { padding: 'p-4 sm:p-6 overflow-y-auto' }, ring: '', shadow: '' }" class="flex flex-col flex-1 min-h-0 max-h-full">
         <template #header>
           <div class="flex items-center justify-between">
             <h3 class="text-lg font-semibold">规划详情</h3>

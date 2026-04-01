@@ -61,7 +61,7 @@
 
     <!-- Detail Panel -->
     <USlideover v-model="showDetail">
-      <UCard>
+      <UCard :ui="{ body: { padding: 'p-4 sm:p-6 overflow-y-auto' }, ring: '', shadow: '' }" class="flex flex-col flex-1 min-h-0 max-h-full">
         <template #header>
           <h3 class="text-lg font-semibold">时段详情</h3>
         </template>
