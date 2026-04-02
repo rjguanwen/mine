@@ -89,7 +89,8 @@
                     v-if="med.mimeType?.startsWith('image/')"
                     :src="med.url"
                     :alt="med.fileName"
-                    class="w-full rounded object-cover max-h-60"
+                    class="w-full rounded object-cover max-h-60 cursor-pointer hover:opacity-90 transition-opacity"
+                    @click="openLightbox(med.url, med.fileName)"
                   />
                   <video
                     v-else-if="med.mimeType?.startsWith('video/')"
@@ -133,6 +134,8 @@
         </div>
       </UCard>
     </USlideover>
+
+    <SharedImageLightbox v-model:visible="lightboxVisible" :src="lightboxSrc" :alt="lightboxAlt" />
   </div>
 </template>
 
@@ -158,6 +161,15 @@ const hoveredCell = ref<CalendarPeriod | null>(null)
 const selectedCell = ref<CalendarPeriod | null>(null)
 const showDetail = ref(false)
 const gridContainer = ref<HTMLElement>()
+const lightboxVisible = ref(false)
+const lightboxSrc = ref('')
+const lightboxAlt = ref('')
+
+function openLightbox(src: string, alt?: string) {
+  lightboxSrc.value = src
+  lightboxAlt.value = alt || ''
+  lightboxVisible.value = true
+}
 
 const cellSize = computed(() => props.compact ? 6 : 10)
 const gap = computed(() => props.compact ? 1 : 2)

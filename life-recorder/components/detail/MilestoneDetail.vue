@@ -27,7 +27,8 @@
           v-if="m.mimeType?.startsWith('image/')"
           :src="m.url"
           :alt="m.fileName"
-          class="w-full rounded-lg object-cover max-h-96"
+          class="w-full rounded-lg object-cover max-h-96 cursor-pointer hover:opacity-90 transition-opacity"
+          @click="openLightbox(m.url, m.fileName)"
         />
         <video
           v-else-if="m.mimeType?.startsWith('video/')"
@@ -45,6 +46,8 @@
         {{ tag.name }}
       </span>
     </div>
+
+    <SharedImageLightbox v-model:visible="lightboxVisible" :src="lightboxSrc" :alt="lightboxAlt" />
   </div>
 </template>
 
@@ -54,4 +57,14 @@ const { categoryBadge, categoryLabel } = useMilestoneHelpers()
 defineProps<{
   item: any
 }>()
+
+const lightboxVisible = ref(false)
+const lightboxSrc = ref('')
+const lightboxAlt = ref('')
+
+function openLightbox(src: string, alt?: string) {
+  lightboxSrc.value = src
+  lightboxAlt.value = alt || ''
+  lightboxVisible.value = true
+}
 </script>
