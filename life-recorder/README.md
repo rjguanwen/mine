@@ -414,8 +414,8 @@ tar czf backup/uploads-$(date +%Y%m%d).tar.gz uploads/
 
 ```bash
 # 每天凌晨 3 点自动备份
-0 3 * * * cp /opt/life-recorder/data/life-recorder.db /opt/backup/life-recorder-$(date +\%Y\%m\%d).db
-0 3 * * * tar czf /opt/backup/uploads-$(date +\%Y\%m\%d).tar.gz -C /opt/life-recorder uploads/
+0 3 * * * cp /home/mine/life-recorder/data/life-recorder.db /opt/backup/life-recorder-$(date +\%Y\%m\%d).db
+0 3 * * * tar czf /opt/backup/uploads-$(date +\%Y\%m\%d).tar.gz -C /home/mine/life-recorder uploads/
 ```
 
 ## 更新部署
